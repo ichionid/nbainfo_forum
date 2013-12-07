@@ -1,0 +1,46 @@
+<?php 
+function nbainfo_general_page_alter($page) {
+  //dd($page);
+}
+function nbainfo_general_block_view_alter(&$data, $block) {
+  //dpm($data);
+  if (isset($data['content']['subject'])) {
+    if ($data['content']['subject'] == 'Shout box') {
+     // $data['content']['all-shouts-link'] = '';
+    }
+  }
+}
+function nbainfo_general_menu_alter(&$items) {
+  dpm($items);
+}
+
+function nbainfo_general_block_info() {    
+  $blocks['nba_info_score_block'] = array(
+    // info: The name of the block.
+    'info' => t('Custom nbainfo block feed'),
+  );
+  $blocks['livescore_link'] = array(
+    // info: The name of the block.
+    'info' => t('Livescore link'),
+  );
+
+ return $blocks;
+}
+function nbainfo_general_block_view($delta = '') {
+  // The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'nba_info_score_block':
+      // Create your block content here
+      $block['subject'] = '';
+      $block['content'] = '<iframe id="inscore-xdc-418273" src="http://www.livescore.in/dk/free/418273/" width="400" height="500" frameborder="0" scrolling="no"></iframe>
+
+<script type="text/javascript">/*<![CDATA[*/try{function inscore_418273_xdc(){this.elm = null;this.hash = null;var times_resized = 0;var times_not_resized = 0;this.resize = function(){times_resized == 1023 && (times_resized = 0);times_not_resized == 1023 && (times_not_resized = 0);if(this.getElm() && location.hash && location.hash != this.hash){this.hash = location.hash;var reggg = new RegExp(".*inscore_ifheight_xdc_([0-9]{2,5}).*");if(result=reggg.exec(location.hash)){this.getElm().style.height = (typeof result[1] == "undefined" ? "10000":(result[1] > 500 && result[1] <= 30000 ? parseInt(result[1]):500)) + "px";times_resized ++;}} else if(location.hash && location.hash == this.hash) times_not_resized ++;else return resize_later(75);resize_later(250);};var resize_later = function(time){setTimeout(function(){ inscore_418273_xdc_run.resize(); }, time);};this.getElm = function(){try {(typeof this.elm == "undefined" || this.elm === null || !this.elm) && (this.elm = document.getElementById("inscore-xdc-418273"));} catch(e) { this.elm = null; }return this.elm;};var show_links = function(){if((times_resized >= 1 || times_not_resized >= 2) && (obj = document.getElementById("freescore_links_418273"))){obj.style.visibility = "visible";obj.style.display = "block";} else show_links_later();};var show_links_later = function() { setTimeout(function(){ show_links(); }, 100); };if (typeof window.postMessage == "undefined"){show_links_later();resize_later();}else{var ev = function(event){try{var data = JSON.parse(event.data);}catch (e){return;}if (data instanceof Array && data[0] == 418273 && typeof data[1] != "undefined"){eval(data[1]);}};if (window.addEventListener){window.addEventListener( "message", ev);}else if ( window.attachEvent ) {window.attachEvent("onmessage", ev);}setTimeout(function(){ document.getElementById("inscore-xdc-418273").contentWindow.postMessage(JSON.stringify(["418273", "run"]), "*"); }, 2000);show_links_later();resize_later();}};var inscore_418273_xdc_run = new inscore_418273_xdc();}catch(e){document.getElementById("inscore-xdc-418273").style.height = "10000px";}
+/*]]>*/</script>';
+      break;
+   case 'livescore_link':
+      $block['content'] = '<a href="http://www.livescore.in/baseball/" title="Baseball Livescore">Baseball Livescore</a>';
+     break;
+  }
+
+  return $block;
+}
