@@ -1,0 +1,5 @@
+name = User menu element dropdown
+description = Adds a menu element containing specific users according to selected roles.
+core = 7.x
+package = Menu
+files[] = user_menu_dropdown.module

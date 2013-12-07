@@ -1,0 +1,133 @@
+<?php 
+function user_menu_dropdown_menu() {
+  $items['users/list'] = array(
+    'title' => t('List of users'),
+    'page callback' => 'user_menu_dropdown_get_selected_users',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/config/people/user_menu_dropdown_admin_settings']=array(
+    'type'              => MENU_NORMAL_ITEM,
+    'title'             => 'Settings of user menu dropdown.',
+    'description'       => 'Modify settings of user dropdown.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('user_menu_dropdown_admin_settings_form'),
+    'access arguments'  => array('administer user menu dropdown'),
+    'file'              => 'includes/admin_settings.inc',
+  );
+  return $items;
+}
+
+function user_menu_dropdown_permission() {
+  return array(
+    'administer user menu dropdown' => array(
+      'title' => t('Administer user menu dropdown'),
+    ),
+  );
+}
+function user_menu_dropdown_get_selected_users() {
+  $roles = variable_get('user_menu_dropdown_selected_roles', array());
+  $range = variable_get('user_menu_dropdown_range', 10);
+  if (empty($roles)) return '';
+  $query = db_select('users', 'u');
+  $query
+  ->leftJoin('users_roles', 'ur', 'ur.uid = u.uid');
+  $db_or = db_or();
+  foreach( $roles as $rid => $value) {
+    if ($value != 0) {
+      $db_or->condition('ur.rid', $rid, '=');
+    }
+  }
+  $query->condition($db_or);
+  $query->range(0, $range);
+  $query->fields('u', array('name', 'uid'));
+  $query->orderBy('u.name', 'ASC');
+  $result = $query->execute();
+  $users_list = array();
+  foreach ($result as $record) {
+    $users_list[] = l($record->name, 'user/' . $record->uid);
+  }
+  return $users_list;
+}
+
+/**
+ * Implements hook_menu_alter.
+ * Check access for forum menu item.
+ */
+function user_menu_dropdown_menu_alter(&$items) {
+  $checked_menus = variable_get('user_menu_dropdown_selected_menus', array());
+  dd($items);
+  // Create users menu
+  // Fetch users
+  // Create links
+  $links = array(
+           array(
+             array(
+               'link_title' => 'Link1',
+               'link_path' => 'users',
+               'menu_name' => 'menu_test_one',
+               'weight' => 0,
+               'expanded' => 1,
+             ),
+             array(
+               'link_title' => 'Link2',
+               'link_path' => 'http://yourdomain.com/link2',
+               'menu_name' => 'menu_test_one',
+               'weight' => 1,
+               'expanded' => 1,
+             ),
+           ),
+           array(
+             array(
+               'link_title' => 'Link3',
+               'link_path' => 'http://yourdomain.com/link3',
+               'menu_name' => 'menu_test_two',
+               'weight' => 0,
+               'expanded' => 1,
+             ),
+             array(
+               'link_title' => 'Link4',
+               'link_path' => 'http://yourdomain.com/link4',
+               'menu_name' => 'menu_test_two',
+               'weight' => 1,
+               'expanded' => 1,
+             ),
+           ),
+           array(
+             array(
+               'link_title' => 'Link5',
+               'link_path' => 'http://yourdomain.com/link5',
+               'menu_name' => 'menu_test_three',
+               'weight' => 0,
+               'expanded' => 1,
+             ),
+             array(
+               'link_title' => 'Link6',
+               'link_path' => 'http://yourdomain.com/link6',
+               'menu_name' => 'menu_test_three',
+               'weight' => 1,
+               'expanded' => 1,
+             ),
+           ),
+         );
+    foreach ($links as $layer1) {
+      foreach($layer1 as $link) {
+      // Build an array of menu link 
+      $item = array(
+        'link_path' => $link['link_path'],
+        'link_title' => $link['link_title'],
+        'menu_name' => 'menu-nbainfo-menu',
+        'weight' => $link['weight'],
+        'expanded' => $link['expanded'],
+      );
+      // Look the table first if the data does exist
+      $exists = db_query("SELECT mlid from {menu_links} WHERE link_title=:link_title AND link_path=:link_path", array(':link_title' =>  $link['link_title'], ':link_path' => $link['link_path']))->fetchField();
+      // Save the record if the data does not exist
+      if(!$exists) {  
+        menu_link_save($item);
+      }
+    }
+  }
+ watchdog('OLA', 'EEEEEEEEAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaa');
+}
+?>
