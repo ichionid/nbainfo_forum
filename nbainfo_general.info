@@ -1,6 +1,0 @@
-name = NBAinfo general module
-description = Includes various modification hooks of NBAinfo.
-core = 7.x
-package = NBAinfo
-files[] = nbainfo_general.module
-
